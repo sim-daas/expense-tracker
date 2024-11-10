@@ -1,0 +1,67 @@
+/* Basic reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* App container styling */
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Background styling */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('./back.webp'); /* Replace with your local gif */
+  background-size: cover;
+  background-position: center;
+  /* filter: blur(8px);  /* Optional: Adds blur effect for better readability */
+  z-index: -1;  /* Keeps the background behind the content */
+  /*opacity: 0.6;  /* Optional: Adjust opacity for better contrast */
+}
+
+/* Fixed header at the top */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0); /* Semi-transparent dark background */
+  padding: 100px;
+  text-align: center;
+  z-index: 10;
+  width: 100%;
+}
+
+/* Animated title styling */
+.app-title {
+  font-size: 5rem;
+  font-weight: bold;
+  color: #f0f0f0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Content section that scrolls under the fixed header */
+.content {
+  margin-top: 100px;  /* Makes room for the fixed header */
+  padding: 20px;
+  height: calc(100vh - 100px); /* Ensures content fills the rest of the screen */
+  overflow-y: auto; /* Enables vertical scrolling */
+}
+
+/* Styling for content containers */
+.content-container {
+  color: white;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
