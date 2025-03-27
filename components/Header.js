@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { exportToCSV, importFromCSV } from '../utils/csvHelpers';
 
-const Header = () => {
+const Header = ({ onDataChanged }) => {
     const handleExport = async () => {
         try {
             await exportToCSV();
@@ -14,8 +14,13 @@ const Header = () => {
 
     const handleImport = async () => {
         try {
-            await importFromCSV();
-            Alert.alert('Success', 'Data imported successfully!');
+            const result = await importFromCSV();
+            if (result) {
+                // Reload data if import was successful
+                if (onDataChanged) {
+                    onDataChanged();
+                }
+            }
         } catch (error) {
             Alert.alert('Error', 'Failed to import data');
         }

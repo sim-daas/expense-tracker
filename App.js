@@ -95,6 +95,11 @@ export default function App() {
     setSelectedMonth(month);
   };
 
+  // Add a reference to reload data
+  const reloadData = async () => {
+    await loadExpensesFromStorage();
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
@@ -107,7 +112,7 @@ export default function App() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardAvoidView}
         >
-          <Header />
+          <Header onDataChanged={reloadData} />
 
           <View style={styles.content}>
             <MonthSelector
