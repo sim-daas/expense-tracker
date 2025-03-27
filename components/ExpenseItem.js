@@ -7,9 +7,9 @@ const ExpenseItem = ({ expense, onEdit, onDelete }) => {
             <View style={styles.details}>
                 <Text style={styles.name}>{expense.name}</Text>
                 <Text style={styles.quantity}>Qty: {expense.quantity}</Text>
-                <Text style={styles.price}>${expense.price.toFixed(2)}</Text>
+                <Text style={styles.price}>₹{expense.price.toFixed(2)}</Text>
                 <Text style={styles.total}>
-                    Total: ${(expense.quantity * expense.price).toFixed(2)}
+                    Total: ₹{(expense.quantity * expense.price).toFixed(2)}
                 </Text>
             </View>
 

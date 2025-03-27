@@ -7,9 +7,11 @@ import { loadExpenses, saveExpenses } from './storage';
 // Helper to convert expenses to CSV format
 const convertToCSV = (expenses) => {
     const headers = 'id,name,quantity,price,month,date\n';
-    const rows = expenses.map(expense =>
-        `${expense.id},${expense.name},${expense.quantity},${expense.price},${expense.month},${expense.date}`
-    ).join('\n');
+    const rows = expenses.map(expense => {
+        // Escape commas in fields to avoid CSV formatting issues
+        const escapedName = expense.name.includes(',') ? `"${expense.name}"` : expense.name;
+        return `${expense.id},${escapedName},${expense.quantity},${expense.price},${expense.month},${expense.date}`;
+    }).join('\n');
 
     return headers + rows;
 };
@@ -51,15 +53,28 @@ export const exportToCSV = async () => {
         const csvString = convertToCSV(expenses);
         const fileUri = `${FileSystem.documentDirectory}expenses.csv`;
 
+        // Write the file first
         await FileSystem.writeAsStringAsync(fileUri, csvString);
 
+        // Verify the file was created
+        const fileInfo = await FileSystem.getInfoAsync(fileUri);
+        if (!fileInfo.exists) {
+            throw new Error('Failed to create the file');
+        }
+
+        // Check if sharing is available before trying to share
         if (await Sharing.isAvailableAsync()) {
-            await Sharing.shareAsync(fileUri);
+            await Sharing.shareAsync(fileUri, {
+                mimeType: 'text/csv',
+                dialogTitle: 'Export Expenses',
+                UTI: 'public.comma-separated-values-text'
+            });
         } else {
             Alert.alert('Sharing not available', 'Sharing is not available on this device');
         }
     } catch (error) {
         console.error('Error exporting to CSV:', error);
+        Alert.alert('Export Error', `Could not export the data: ${error.message}`);
         throw error;
     }
 };
