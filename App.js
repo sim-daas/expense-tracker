@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
@@ -7,7 +7,8 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 
 // Import components
@@ -24,6 +25,8 @@ export default function App() {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [editingExpense, setEditingExpense] = useState(null);
   const [filteredExpenses, setFilteredExpenses] = useState([]);
+  // Add a refresh key to force component re-renders
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Load expenses on first render
   useEffect(() => {
@@ -95,10 +98,23 @@ export default function App() {
     setSelectedMonth(month);
   };
 
-  // Add a reference to reload data
-  const reloadData = async () => {
-    await loadExpensesFromStorage();
-  };
+  // Create a more robust reload function
+  const reloadData = useCallback(async () => {
+    console.log('Reloading expenses data');
+    try {
+      const storedExpenses = await loadExpenses();
+      console.log(`Reloaded ${storedExpenses.length} expenses`);
+      setExpenses(storedExpenses);
+      // Force component re-render by changing the key
+      setRefreshKey(prevKey => prevKey + 1);
+
+      // Show which month is currently selected
+      console.log('Current selected month:', selectedMonth);
+    } catch (error) {
+      console.error('Error reloading data:', error);
+      Alert.alert('Error', 'Failed to reload data');
+    }
+  }, [selectedMonth]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -128,6 +144,7 @@ export default function App() {
 
             <View style={styles.listContainer}>
               <ExpenseList
+                key={`expense-list-${refreshKey}-${selectedMonth}`}
                 expenses={filteredExpenses}
                 onEdit={setEditingExpense}
                 onDelete={handleDeleteExpense}

@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { loadExpenses, saveExpenses } from './storage';
 
 // Helper to convert expenses to CSV format
@@ -141,57 +141,82 @@ export const exportToCSV = async () => {
 
 export const importFromCSV = async () => {
     try {
-        const result = await DocumentPicker.getDocumentAsync({
-            type: 'text/csv',
-            copyToCacheDirectory: true
-        });
+        // Get the document with updated options for newer Expo versions
+        let result;
+        try {
+            result = await DocumentPicker.getDocumentAsync({
+                type: ["text/csv", "text/comma-separated-values"],
+                copyToCacheDirectory: true
+            });
+        } catch (e) {
+            console.error("Error picking document:", e);
+            Alert.alert("Error", "Could not open document picker");
+            return false;
+        }
 
-        if (result.type === 'success') {
-            console.log('Selected file:', result.name);
+        console.log("Document picker result:", JSON.stringify(result));
+
+        // Handle both older and newer DocumentPicker API versions
+        const isSuccess = result.type === 'success' || result.canceled === false;
+        const uri = result.uri || (result.assets && result.assets[0]?.uri);
+
+        if (isSuccess && uri) {
+            console.log('Selected file URI:', uri);
 
             try {
-                const fileContent = await FileSystem.readAsStringAsync(result.uri);
+                // Read the file content
+                const fileContent = await FileSystem.readAsStringAsync(uri);
                 console.log('File content loaded, length:', fileContent.length);
+                console.log('First 100 chars:', fileContent.substring(0, 100));
 
+                if (!fileContent || fileContent.trim() === '') {
+                    throw new Error('File is empty');
+                }
+
+                // Parse the CSV data
                 const parsedExpenses = parseCSV(fileContent);
-                console.log('Parsed expenses:', parsedExpenses.length);
+                console.log('Parsed expenses count:', parsedExpenses.length);
 
                 if (parsedExpenses.length > 0) {
-                    // Get existing expenses first
-                    const existingExpenses = await loadExpenses();
-                    console.log('Existing expenses:', existingExpenses.length);
+                    // Force a save with the new data
+                    await saveExpenses(parsedExpenses);
+                    console.log('Saved imported expenses');
 
-                    // Merge with existing expenses (replace duplicates by ID)
-                    const expenseMap = new Map();
-                    existingExpenses.forEach(exp => expenseMap.set(exp.id, exp));
-                    parsedExpenses.forEach(exp => expenseMap.set(exp.id, exp));
-
-                    const mergedExpenses = Array.from(expenseMap.values());
-                    console.log('Merged expenses:', mergedExpenses.length);
-
-                    // Save the merged expenses
-                    await saveExpenses(mergedExpenses);
+                    // Verify the save worked
+                    const savedExpenses = await loadExpenses();
+                    console.log('Verified expense count after save:', savedExpenses.length);
 
                     Alert.alert(
                         'Import Successful',
-                        `Successfully imported ${parsedExpenses.length} expenses. Please restart the app or change months to see the imported data.`
+                        `Imported ${parsedExpenses.length} expenses. The app will now reload data.`,
+                        [
+                            {
+                                text: 'OK',
+                                onPress: () => {
+                                    console.log('User acknowledged import');
+                                    return true;
+                                }
+                            }
+                        ]
                     );
 
                     return true;
                 } else {
                     Alert.alert('Invalid Data', 'No valid expense data found in the file');
+                    return false;
                 }
             } catch (error) {
                 console.error('Error processing CSV:', error);
-                Alert.alert('Import Error', `Error processing CSV file: ${error.message}`);
+                Alert.alert('Import Error', `Error processing file: ${error.message}`);
+                return false;
             }
-        } else if (result.type === 'cancel') {
-            console.log('User cancelled the picker');
+        } else {
+            console.log('User cancelled or picker failed');
+            return false;
         }
-        return false;
     } catch (error) {
-        console.error('Error importing from CSV:', error);
+        console.error('Error in importFromCSV:', error);
         Alert.alert('Import Error', `Could not import the data: ${error.message}`);
-        throw error;
+        return false;
     }
 };
