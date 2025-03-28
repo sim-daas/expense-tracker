@@ -5,13 +5,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const INCOME_STORAGE_KEY = 'income_data';
 
 const Income = ({ expenses }) => {
-    const [income, setIncome] = useState(0);
+    const [balance, setBalance] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
     const [inputValue, setInputValue] = useState('');
 
-    // Load saved income on component mount
+    // Load saved balance on component mount
     useEffect(() => {
-        loadIncome();
+        loadBalance();
     }, []);
 
     // Calculate total expenses across all months
@@ -20,36 +20,38 @@ const Income = ({ expenses }) => {
     }, 0);
 
     // Calculate remaining balance
-    const remainingBalance = income - totalExpenses;
+    const remainingBalance = balance - totalExpenses;
 
-    // Load income from AsyncStorage
-    const loadIncome = async () => {
+    // Load balance from AsyncStorage
+    const loadBalance = async () => {
         try {
             const value = await AsyncStorage.getItem(INCOME_STORAGE_KEY);
             if (value !== null) {
-                setIncome(parseFloat(value));
+                setBalance(parseFloat(value));
             }
         } catch (error) {
-            console.error('Failed to load income', error);
+            console.error('Failed to load balance', error);
         }
     };
 
-    // Save income to AsyncStorage
-    const saveIncome = async (value) => {
+    // Save balance to AsyncStorage
+    const saveBalance = async (value) => {
         try {
             await AsyncStorage.setItem(INCOME_STORAGE_KEY, value.toString());
         } catch (error) {
-            console.error('Failed to save income', error);
+            console.error('Failed to save balance', error);
         }
     };
 
-    // Handle adding/updating income
-    const handleUpdateIncome = () => {
+    // Handle adding to balance
+    const handleAddToBalance = () => {
         if (inputValue.trim() === '') return;
 
-        const newIncome = parseFloat(inputValue) || 0;
-        setIncome(newIncome);
-        saveIncome(newIncome);
+        const additionalAmount = parseFloat(inputValue) || 0;
+        const newBalance = balance + additionalAmount;
+
+        setBalance(newBalance);
+        saveBalance(newBalance);
         setModalVisible(false);
         setInputValue('');
     };
@@ -77,11 +79,15 @@ const Income = ({ expenses }) => {
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Update Income</Text>
+                        <Text style={styles.modalTitle}>Add to Balance</Text>
+
+                        <Text style={styles.currentBalanceText}>
+                            Current Balance: ₹{balance.toFixed(2)}
+                        </Text>
 
                         <TextInput
                             style={styles.input}
-                            placeholder="Enter income amount"
+                            placeholder="Enter amount to add"
                             placeholderTextColor="#888"
                             keyboardType="numeric"
                             value={inputValue}
@@ -101,9 +107,9 @@ const Income = ({ expenses }) => {
 
                             <TouchableOpacity
                                 style={[styles.button, styles.saveButton]}
-                                onPress={handleUpdateIncome}
+                                onPress={handleAddToBalance}
                             >
-                                <Text style={styles.buttonText}>Save</Text>
+                                <Text style={styles.buttonText}>Add</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -157,6 +163,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 16,
+        textAlign: 'center',
+    },
+    currentBalanceText: {
+        color: '#CCCCCC',
+        fontSize: 14,
+        marginBottom: 12,
         textAlign: 'center',
     },
     input: {
