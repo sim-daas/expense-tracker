@@ -30,8 +30,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "your-project-id"
+        "projectId": "836802dd-f441-43ff-a720-ae1e690b922f"
       }
-    }
+    },
+    "owner": "raamlaal_daas"
   }
 }
