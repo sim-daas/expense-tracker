@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert, Platform, StatusBar } from 'react-native';
 import { exportToCSV, importFromCSV } from '../utils/csvHelpers';
 import { resetWithData, loadExpenses } from '../utils/storage';
 
@@ -72,8 +72,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 16,
         paddingHorizontal: 16,
+        paddingTop: Platform.OS === 'android' ? 40 : 50, // Increased top padding to avoid notch
+        paddingBottom: 16,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Added slight background to make header more visible
     },
     title: {
         color: '#FFFFFF',

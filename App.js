@@ -117,8 +117,8 @@ export default function App() {
   }, [selectedMonth]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+    <View style={styles.container}>
+      <StatusBar style="light" translucent backgroundColor="transparent" />
       <ImageBackground
         source={require('./assets/background.gif')}
         style={styles.background}
@@ -153,7 +153,7 @@ export default function App() {
           </View>
         </KeyboardAvoidingView>
       </ImageBackground>
-    </SafeAreaView>
+    </View>
   );
 }
 
