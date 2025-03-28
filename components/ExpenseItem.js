@@ -35,9 +35,9 @@ const ExpenseItem = ({ expense, onEdit, onDelete }) => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: 'rgba(30, 30, 30, 0.8)',
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 10,
+        borderRadius: 6,
+        padding: 8, // Reduced padding
+        marginBottom: 6, // Reduced margin
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
@@ -46,32 +46,32 @@ const styles = StyleSheet.create({
     },
     name: {
         color: '#FFFFFF',
-        fontSize: 16,
+        fontSize: 14, // Reduced from 16
         fontWeight: 'bold',
-        marginBottom: 4,
+        marginBottom: 2, // Reduced from 4
     },
     quantity: {
         color: '#CCCCCC',
-        fontSize: 14,
+        fontSize: 12, // Reduced from 14
     },
     price: {
         color: '#CCCCCC',
-        fontSize: 14,
+        fontSize: 12, // Reduced from 14
     },
     total: {
         color: '#4A58D9',
-        fontSize: 14,
+        fontSize: 12, // Reduced from 14
         fontWeight: 'bold',
-        marginTop: 4,
+        marginTop: 2, // Reduced from 4
     },
     actions: {
         justifyContent: 'space-between',
     },
     button: {
-        paddingVertical: 4,
-        paddingHorizontal: 10,
+        paddingVertical: 3, // Reduced padding
+        paddingHorizontal: 8, // Reduced padding
         borderRadius: 4,
-        marginBottom: 4,
+        marginBottom: 3, // Reduced margin
     },
     editButton: {
         backgroundColor: '#4A58D9',
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#FFFFFF',
-        fontSize: 12,
+        fontSize: 10, // Reduced from 12
     }
 });
 

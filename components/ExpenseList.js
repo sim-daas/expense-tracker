@@ -22,6 +22,8 @@ const ExpenseList = ({ expenses, onEdit, onDelete }) => {
                     onDelete={onDelete}
                 />
             )}
+            initialNumToRender={10}
+            ItemSeparatorComponent={() => <View style={{ height: 4 }} />}
         />
     );
 };
@@ -35,7 +37,7 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         color: '#888',
-        fontSize: 16,
+        fontSize: 14,
     },
 });
 
