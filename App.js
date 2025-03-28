@@ -16,6 +16,7 @@ import Header from './components/Header';
 import MonthSelector from './components/MonthSelector';
 import ExpenseForm from './components/ExpenseForm';
 import ExpenseList from './components/ExpenseList';
+import MonthlyTotal from './components/MonthlyTotal'; // Add this import
 
 // Import utilities
 import { loadExpenses, saveExpenses } from './utils/storage';
@@ -25,20 +26,16 @@ export default function App() {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [editingExpense, setEditingExpense] = useState(null);
   const [filteredExpenses, setFilteredExpenses] = useState([]);
-  // Add a refresh key to force component re-renders
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // Load expenses on first render
   useEffect(() => {
     loadExpensesFromStorage();
   }, []);
 
-  // Filter expenses when selected month changes or expenses change
   useEffect(() => {
     filterExpensesByMonth();
   }, [selectedMonth, expenses]);
 
-  // Get current month name
   function getCurrentMonth() {
     const months = [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -48,21 +45,17 @@ export default function App() {
     return months[currentDate.getMonth()];
   }
 
-  // Load expenses from AsyncStorage
   const loadExpensesFromStorage = async () => {
     const storedExpenses = await loadExpenses();
     setExpenses(storedExpenses);
   };
 
-  // Filter expenses based on selected month
   const filterExpensesByMonth = () => {
     const filtered = expenses.filter(expense => expense.month === selectedMonth);
-    // Sort expenses by date (newest first)
     const sorted = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
     setFilteredExpenses(sorted);
   };
 
-  // Handle adding a new expense
   const handleAddExpense = (expenseData) => {
     const newExpense = {
       ...expenseData,
@@ -76,7 +69,6 @@ export default function App() {
     saveExpenses(updatedExpenses);
   };
 
-  // Handle editing an expense
   const handleEditExpense = (editedExpense) => {
     const updatedExpenses = expenses.map(expense =>
       expense.id === editedExpense.id ? editedExpense : expense
@@ -86,29 +78,23 @@ export default function App() {
     setEditingExpense(null);
   };
 
-  // Handle deleting an expense
   const handleDeleteExpense = (id) => {
     const updatedExpenses = expenses.filter(expense => expense.id !== id);
     setExpenses(updatedExpenses);
     saveExpenses(updatedExpenses);
   };
 
-  // Handle month selection
   const handleMonthSelect = (month) => {
     setSelectedMonth(month);
   };
 
-  // Create a more robust reload function
   const reloadData = useCallback(async () => {
     console.log('Reloading expenses data');
     try {
       const storedExpenses = await loadExpenses();
       console.log(`Reloaded ${storedExpenses.length} expenses`);
       setExpenses(storedExpenses);
-      // Force component re-render by changing the key
       setRefreshKey(prevKey => prevKey + 1);
-
-      // Show which month is currently selected
       console.log('Current selected month:', selectedMonth);
     } catch (error) {
       console.error('Error reloading data:', error);
@@ -131,10 +117,13 @@ export default function App() {
           <Header onDataChanged={reloadData} />
 
           <View style={styles.content}>
-            <MonthSelector
-              selectedMonth={selectedMonth}
-              onSelectMonth={handleMonthSelect}
-            />
+            <View style={styles.monthRow}>
+              <MonthlyTotal expenses={expenses} month={selectedMonth} />
+              <MonthSelector
+                selectedMonth={selectedMonth}
+                onSelectMonth={handleMonthSelect}
+              />
+            </View>
 
             <ExpenseForm
               onAddExpense={handleAddExpense}
@@ -160,7 +149,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212', // Dark theme background
+    backgroundColor: '#121212',
   },
   background: {
     flex: 1,
@@ -177,5 +166,11 @@ const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
     marginTop: 16,
+  },
+  monthRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 8,
   },
 });

@@ -69,7 +69,7 @@ const MonthSelector = ({ selectedMonth, onSelectMonth }) => {
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: 'center',
+        alignItems: 'flex-end',  // Change from 'center' to 'flex-end'
         marginVertical: 12,
     },
     selectorButton: {
