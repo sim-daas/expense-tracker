@@ -9,7 +9,7 @@ const MonthlyTotal = ({ expenses, month }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>Month Total:</Text>
+            <Text style={styles.label}>Month:</Text>
             <Text style={styles.amount}>₹{totalAmount.toFixed(2)}</Text>
         </View>
     );
@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 10,
         marginVertical: 8,
-        alignSelf: 'flex-start',
+        alignItems: 'center',
+        minWidth: 100,
     },
     label: {
         color: '#CCCCCC',

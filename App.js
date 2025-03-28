@@ -16,7 +16,8 @@ import Header from './components/Header';
 import MonthSelector from './components/MonthSelector';
 import ExpenseForm from './components/ExpenseForm';
 import ExpenseList from './components/ExpenseList';
-import MonthlyTotal from './components/MonthlyTotal'; // Add this import
+import MonthlyTotal from './components/MonthlyTotal';
+import Income from './components/Income'; // Add this import
 
 // Import utilities
 import { loadExpenses, saveExpenses } from './utils/storage';
@@ -119,6 +120,7 @@ export default function App() {
           <View style={styles.content}>
             <View style={styles.monthRow}>
               <MonthlyTotal expenses={expenses} month={selectedMonth} />
+              <Income expenses={expenses} />
               <MonthSelector
                 selectedMonth={selectedMonth}
                 onSelectMonth={handleMonthSelect}
