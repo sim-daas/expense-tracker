@@ -38,7 +38,7 @@ A simple yet powerful mobile application for tracking daily expenses, built with
 1. Clone the repository:
    ```
    git clone https://github.com/yourusername/expense-tracker.git
-   cd expense-app
+   cd expense-tracker
    ```
 
 2. Install dependencies:
