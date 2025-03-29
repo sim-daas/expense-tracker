@@ -2,7 +2,15 @@
 
 A simple yet powerful mobile application for tracking daily expenses, built with React Native and Expo.
 
-![Expense Tracker App](./assets/screenshot.png)
+## App Screenshots
+
+<div align="center">
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+    <img src="./assets/app1.jpeg" alt="Expense Tracker Main Screen" width="250"/>
+    <img src="./assets/app2.jpeg" alt="Adding New Expense" width="250"/>
+    <img src="./assets/app3.jpeg" alt="Monthly Summary View" width="250"/>
+  </div>
+</div>
 
 ## Features
 
